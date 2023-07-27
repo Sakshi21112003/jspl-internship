@@ -1,0 +1,143 @@
+import numpy as np
+import pandas as pd
+import os
+import cv2
+from sklearn.model_selection import train_test_split
+import tensorflow as tf
+from tensorflow.keras import layers, models
+
+# Step 1: Data Collection and Preprocessing
+def load_data(data_directory):
+    heat_numbers = []
+    plate_ids = []
+    images = []
+    
+    for subdir, dirs, files in os.walk(data_directory):
+        for file in files:
+            image_path = os.path.join(subdir, file)
+            label = os.path.basename(subdir)
+            heat_number, plate_id = label.split("_")
+            
+            # Load and preprocess the image
+            image = cv2.imread(image_path)
+            image = cv2.resize(image, (224, 224))  # Adjust size as per your model's input requirements
+            image = image / 255.0  # Normalize pixel values (if required)
+            
+            heat_numbers.append(heat_number)
+            plate_ids.append(plate_id)
+            images.append(image)
+    
+    return np.array(images), np.array(heat_numbers), np.array(plate_ids)
+
+data_directory = "path/to/your/dataset"
+images, heat_numbers, plate_ids = load_data(data_directory)
+
+# Step 2: Split the dataset into training and validation sets
+X_train, X_val, heat_train, heat_val, plate_train, plate_val = train_test_split(images, heat_numbers, plate_ids, test_size=0.2, random_state=42)
+
+# Step 3: Model Selection and Training
+model = models.Sequential([
+    # Define your CNN architecture here (e.g., convolutional layers, pooling, fully connected layers)
+])
+
+model.compile(optimizer='adam', loss='sparse_categorical_crossentropy', metrics=['accuracy'])
+model.fit(X_train, heat_train, epochs=10, batch_size=32, validation_data=(X_val, heat_val))
+
+# Step 4: Model Evaluation (if needed)
+# Evaluate the model on the validation set and fine-tune hyperparameters if necessary
+
+# Step 5: Model Deployment
+# Once the model has satisfactory performance, save it to use for prediction on new images
+model.save("heat_number_model.h5")
+
+# For plate ID recognition, you can follow similar steps with the plate_ids array and create a separate model for it.
+
+# Step 6: Prediction and Saving Results to Excel
+def predict_heat_and_plate(model, images):
+    predictions = model.predict(images)
+    return np.argmax(predictions, axis=1)
+
+# Load the saved model for heat number prediction
+model = tf.keras.models.load_model("heat_number_model.h5")
+
+# Predict heat numbers and plate IDs for the validation set
+predicted_heat_val = predict_heat_and_plate(model, X_val)
+predicted_plate_val = predict_heat_and_plate(plate_model, X_val)  # Assuming you have another model for plate ID prediction
+
+# Create a DataFrame with the predicted heat numbers and plate IDs
+result_df = pd.DataFrame({"Actual_Heat": heat_val, "Predicted_Heat": predicted_heat_val,
+                          "Actual_Plate": plate_val, "Predicted_Plate": predicted_plate_val})
+
+# Save the results to an Excel file
+result_df.to_excel("predicted_results.xlsx", index=False)import numpy as np
+import pandas as pd
+import os
+import cv2
+from sklearn.model_selection import train_test_split
+import tensorflow as tf
+from tensorflow.keras import layers, models
+
+# Step 1: Data Collection and Preprocessing
+def load_data(data_directory):
+    heat_numbers = []
+    plate_ids = []
+    images = []
+    
+    for subdir, dirs, files in os.walk(data_directory):
+        for file in files:
+            image_path = os.path.join(subdir, file)
+            label = os.path.basename(subdir)
+            heat_number, plate_id = label.split("_")
+            
+            # Load and preprocess the image
+            image = cv2.imread(image_path)
+            image = cv2.resize(image, (224, 224))  # Adjust size as per your model's input requirements
+            image = image / 255.0  # Normalize pixel values (if required)
+            
+            heat_numbers.append(heat_number)
+            plate_ids.append(plate_id)
+            images.append(image)
+    
+    return np.array(images), np.array(heat_numbers), np.array(plate_ids)
+
+data_directory = "path/to/your/dataset"
+images, heat_numbers, plate_ids = load_data(data_directory)
+
+# Step 2: Split the dataset into training and validation sets
+X_train, X_val, heat_train, heat_val, plate_train, plate_val = train_test_split(images, heat_numbers, plate_ids, test_size=0.2, random_state=42)
+
+# Step 3: Model Selection and Training
+model = models.Sequential([
+    # Define your CNN architecture here (e.g., convolutional layers, pooling, fully connected layers)
+])
+
+model.compile(optimizer='adam', loss='sparse_categorical_crossentropy', metrics=['accuracy'])
+model.fit(X_train, heat_train, epochs=10, batch_size=32, validation_data=(X_val, heat_val))
+
+# Step 4: Model Evaluation (if needed)
+# Evaluate the model on the validation set and fine-tune hyperparameters if necessary
+
+# Step 5: Model Deployment
+# Once the model has satisfactory performance, save it to use for prediction on new images
+model.save("heat_number_model.h5")
+
+# For plate ID recognition, you can follow similar steps with the plate_ids array and create a separate model for it.
+
+# Step 6: Prediction and Saving Results to Excel
+def predict_heat_and_plate(model, images):
+    predictions = model.predict(images)
+    return np.argmax(predictions, axis=1)
+
+# Load the saved model for heat number prediction
+model = tf.keras.models.load_model("heat_number_model.h5")
+
+# Predict heat numbers and plate IDs for the validation set
+predicted_heat_val = predict_heat_and_plate(model, X_val)
+predicted_plate_val = predict_heat_and_plate(plate_model, X_val)  # Assuming you have another model for plate ID prediction
+
+# Create a DataFrame with the predicted heat numbers and plate IDs
+result_df = pd.DataFrame({"Actual_Heat": heat_val, "Predicted_Heat": predicted_heat_val,
+                          "Actual_Plate": plate_val, "Predicted_Plate": predicted_plate_val})
+
+# Save the results to an Excel file
+result_df.to_excel("predicted_results.xlsx", index=False)
