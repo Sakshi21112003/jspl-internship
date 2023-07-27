@@ -12,12 +12,12 @@ The initial review of an MTR begins with a physical inspection of the material o
 
 ![image](https://github.com/Sakshi21112003/jspl-internship/assets/86145621/eb56c902-6c7d-4c60-96c6-50aa4445ae2c)
 
-##Problem Statement:
+## Problem Statement:
 The goal of this project is to develop a computer vision system capable of automatically detecting and recognizing plate IDs, heat numbers, and dimensions from steel plates in an industrial environment. The system will use image processing techniques and optical character recognition (OCR) to extract alphanumeric information and dimension measurements. The detected information will be saved in an Excel sheet for easy data management and traceability  
 
  
 
-Project Goals: 
+## Project Goals: 
 
 1.Develop an object detection and localization algorithm to identify steel plates within the camera's field of view. 
 
